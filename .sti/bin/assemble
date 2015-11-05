@@ -27,7 +27,7 @@ cp -ad /tmp/src/* $LOCAL_SOURCE_DIR
 if [ -d "/tmp/src/.m2" ]; then
   echo "Found .m2 copying contents to $HOME/.m2"
   mkdir -p "$HOME/.m2"
-  cp -rp "/tmo/src/.m2/*" "$HOME/.m2/"
+  cp -rp "/tmp/src/.m2/*" "$HOME/.m2/"
 fi
 
 # If a pom.xml is present, this is a normal build scenario
