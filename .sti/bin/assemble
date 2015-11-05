@@ -24,12 +24,16 @@ function copy_artifacts() {
 # Copy the source for compilation
 cp -ad /tmp/src/* $LOCAL_SOURCE_DIR
 
+if [ -d "/tmp/src/.m2" ]; then
+  echo "Found .m2 copying contents to $HOME/.m2"
+  mkdir -p "$HOME/.m2"
+  cp -rp "/tmo/src/.m2/*" "$HOME/.m2/"
+fi
+
 # If a pom.xml is present, this is a normal build scenario
 # so run maven.
 if [ -f "$LOCAL_SOURCE_DIR/pom.xml" ]; then
   pushd $LOCAL_SOURCE_DIR &> /dev/null
-
-  ls -la
 
   # If we have a .m2 dir in the source dir, then copy its contents to default .m2 location
   if [ -d ".m2" ]; then
