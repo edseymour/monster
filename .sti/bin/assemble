@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/sh -x
 
 # Source code provided to STI is at ${HOME}/source
 LOCAL_SOURCE_DIR=${HOME}/source
@@ -24,11 +24,10 @@ function copy_artifacts() {
 # Copy the source for compilation
 cp -ad /tmp/src/* $LOCAL_SOURCE_DIR
 
-if [ -d "/tmp/src/.m2" ]; then
-  echo "Found .m2 copying contents to $HOME/.m2"
-  ls -la /tmp/src/.m2
+if [ -e "/tmp/src/.m2/settings.xml" ]; then
+  echo "Found settings.xml copying to $HOME/.m2"
   mkdir -p "$HOME/.m2"
-  cp -rp "/tmp/src/.m2/*" "$HOME/.m2/"
+  cp /tmp/src/.m2/settings.xml "$HOME/.m2/"
 fi
 
 # If a pom.xml is present, this is a normal build scenario
