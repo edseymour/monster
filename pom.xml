@@ -19,6 +19,7 @@
 
         https://access.redhat.com/documentation/en-US/JBoss_Enterprise_Application_Platform/6.3/html-single/Development_Guide
     -->
+    <!-- Removing explicit repository definitions, these should be provided by settings.xml    
     <repositories>
         <repository>
             <id>redhat-techpreview-all-repository</id>
@@ -44,6 +45,7 @@
             </snapshots>
         </pluginRepository>
     </pluginRepositories>
+    --> 
 
     <properties>
         <!-- Explicitly declaring the source encoding eliminates the following 
