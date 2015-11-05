@@ -40,7 +40,7 @@ if [ -f "$LOCAL_SOURCE_DIR/pom.xml" ]; then
   fi
 
   MAVEN_OPTS="--settings $HOME/.m2/settings.xml"
-  export MAVEN_ARGS=$MAVEN_OPTS $MAVEN_ARGS
+  export MAVEN_ARGS="$MAVEN_OPTS $MAVEN_ARGS"
 
   echo "Found pom.xml... attempting to build with 'mvn -e ${MAVEN_ARGS}'"
   echo "Using $(mvn --version)"
