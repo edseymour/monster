@@ -1,13 +1,14 @@
 kind: Template
 apiVersion: v1
 metadata:
-  name: monster
+  name: monster-prod
   annotations:
     tags: instant-app,javaee
     iconClass: icon-jboss
     description: |
       Ticket Monster is a moderately complex application that demonstrates how
-      to build modern applications using JBoss web technologies
+      to build modern applications using JBoss web technologies.  This template
+      is for "production deployments" of Ticket Monster.
 
 parameters:
 - name: MYSQL_DATABASE
@@ -17,55 +18,14 @@ parameters:
 - name: MYSQL_PASSWORD
   from: '[a-zA-Z0-9]{8}'
   generate: expression
-- name: HTTP_PROXY_URL
-  description: "Enter a web proxy URL if building behind a corporate firewall"
-- name: HTTPS_PROXY_URL
-  description: "Enter a web proxy URL if building behind a corporate firewall"
-- name: GIT_URL
-  description: "Enter the URL of your Git repo"
-  value: "https://github.com/edseymour/monster.git"
 
 objects:
-- kind: ImageStream
-  apiVersion: v1
-  metadata:
-    name: monster
-
-- kind: BuildConfig
-  apiVersion: v1
-  metadata:
-    name: monster
-  spec:
-    triggers:
-    - type: Generic
-      generic:
-        secret: secret
-    - type: ImageChange
-    strategy:
-      type: Source
-      sourceStrategy:
-        from:
-          kind: ImageStreamTag
-          name: jboss-eap6-openshift:6.4
-          namespace: openshift
-    source:
-      type: Git
-      git:
-        uri: ${GIT_URL}
-        httpProxy: ${HTTP_PROXY_URL}
-        httpsProxy: ${HTTPS_PROXY_URL}
-        ref: master
-    output:
-      to:
-        kind: ImageStreamTag
-        name: monster:latest
-
 - kind: DeploymentConfig
   apiVersion: v1
   metadata:
     name: monster
   spec:
-    replicas: 1
+    replicas: 3
     selector:
       deploymentConfig: monster
     template:
@@ -80,8 +40,6 @@ objects:
           ports:
           - name: http
             containerPort: 8080
-          - name: ping
-            containerPort: 8888
           - name: jolokia
             containerPort: 8778
           readinessProbe:
@@ -103,12 +61,8 @@ objects:
             value: ${MYSQL_USER}
           - name: DB_PASSWORD
             value: ${MYSQL_PASSWORD}
-          - name: OPENSHIFT_DNS_PING_SERVICE_NAME
-            value: monster
-          - name: OPENSHIFT_DNS_PING_SERVICE_PORT
-            value: "8888"
-          - name: DEBUG
-            value: "true"
+          - name: JAVA_OPTS
+            value: "-Xmx512m -XX:MaxPermSize=256m -Djava.net.preferIPv4Stack=true -Djboss.modules.system.pkgs=org.jboss.logmanager -Djava.awt.headless=true -Djboss.modules.policy-permissions=true"
     triggers:
     - type: ImageChange
       imageChangeParams:
@@ -116,8 +70,9 @@ objects:
         containerNames:
         - monster
         from:
-          kind: ImageStream
-          name: monster
+          kind: ImageStreamTag
+          name: monster:prod
+          namespace: dev
 
 - kind: DeploymentConfig
   apiVersion: v1
@@ -164,8 +119,6 @@ objects:
     ports:
     - name: http
       port: 8080
-    - name: ping
-      port: 8888
     selector:
       deploymentConfig: monster
 

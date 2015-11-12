@@ -1,4 +1,4 @@
-#!/bin/sh -x
+#!/bin/sh 
 
 # Source code provided to STI is at ${HOME}/source
 LOCAL_SOURCE_DIR=${HOME}/source
@@ -24,10 +24,12 @@ function copy_artifacts() {
 # Copy the source for compilation
 cp -ad /tmp/src/* $LOCAL_SOURCE_DIR
 
+export MAVEN_OPTS=""
 if [ -e "/tmp/src/.m2/settings.xml" ]; then
   echo "Found settings.xml copying to $HOME/.m2"
   mkdir -p "$HOME/.m2"
   cp /tmp/src/.m2/settings.xml "$HOME/.m2/"
+  export MAVEN_OPTS="--settings $HOME/.m2/settings.xml"
 fi
 
 # If a pom.xml is present, this is a normal build scenario
@@ -39,14 +41,11 @@ if [ -f "$LOCAL_SOURCE_DIR/pom.xml" ]; then
     export MAVEN_ARGS="package -Popenshift -DskipTests -Dcom.redhat.xpaas.repo.redhatga"
   fi
 
-  MAVEN_OPTS="--settings $HOME/.m2/settings.xml"
-  export MAVEN_ARGS="$MAVEN_OPTS $MAVEN_ARGS"
-
-  echo "Found pom.xml... attempting to build with 'mvn -e ${MAVEN_ARGS}'"
+  echo "Found pom.xml... attempting to build with 'mvn -e ${MAVEN_OPTS} ${MAVEN_CMD_ARGS}'"
   echo "Using $(mvn --version)"
   
   # Execute the actual build
-  mvn -e $MAVEN_ARGS
+  mvn -e $MAVEN_OPTS $MAVEN_ARGS
 
   ERR=$?
   if [ $ERR -ne 0 ]; then
@@ -71,7 +70,7 @@ if [ -f "$LOCAL_SOURCE_DIR/pom.xml" ]; then
   # clean up after maven
   echo "clean up after maven with 'mvn -e ${MAVEN_ARGS} clean'"
   
-  mvn -e $MAVEN_ARGS clean
+  mvn -e $MAVEN_OPTS $MAVEN_ARGS clean
   if [ -d "$HOME/.m2/repository" ]; then
     rm -r "$HOME/.m2/repository"
   fi
