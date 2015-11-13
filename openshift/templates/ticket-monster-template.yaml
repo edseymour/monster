@@ -25,7 +25,7 @@ parameters:
   description: "Enter the URL of your Git repo"
   value: "https://github.com/edseymour/monster.git"
 - name: MAVEN_PROXY_URL
-  description: "Enter the URL of your Maven Proxy server, e.g. Nexus or Artifactory
+  description: "Enter the URL of your Maven Proxy server, e.g. Nexus or Artifactory"
 
 objects:
 - kind: ImageStream
