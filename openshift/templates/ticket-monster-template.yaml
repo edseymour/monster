@@ -59,7 +59,7 @@ objects:
         uri: ${GIT_URL}
         httpProxy: ${HTTP_PROXY_URL}
         httpsProxy: ${HTTPS_PROXY_URL}
-        ref: master
+        ref: nativebuild
     output:
       to:
         kind: ImageStreamTag
